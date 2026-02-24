@@ -1,13 +1,13 @@
 {
   "ok": true,
-  "used": 204000,
+  "used": 210000,
   "max": 1000000,
-  "percent": 20,
+  "percent": 21,
   "sessionLeftPercent": null,
   "dayLeftPercent": null,
   "model": "google/gemini-3-pro-preview",
   "provider": "Google",
   "auth": "Verified",
   "source": "openclaw status",
-  "updatedAt": "2026-02-24T10:50:12-0500"
+  "updatedAt": "2026-02-24T10:51:39-0500"
 }
