@@ -1,9 +1,9 @@
 {
   "ok": true,
-  "cpu": 12,
+  "cpu": 17,
   "linuxDisk": {
     "size": "11G",
-    "used": "6.9G",
+    "used": "7.0G",
     "avail": "2.3G",
     "usePercent": "76"
   },
@@ -19,5 +19,5 @@
     "nvm": "1.6G",
     "npm": "521M"
   },
-  "updatedAt": "2026-02-24T11:43:04-0500"
+  "updatedAt": "2026-02-24T11:44:10-0500"
 }
