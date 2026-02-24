@@ -3,342 +3,326 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Saber Mission Control</title>
+  <title>Mission Control</title>
   <style>
-    :root { --bg:#0a1022; --panel:#131c3b; --text:#eaf0ff; --muted:#9fb0e0; --ok:#57e3a0; --warn:#ffd166; --danger:#ff6b6b; }
+    :root { --bg:#0a1022; --panel:#131c3b; --text:#eaf0ff; --muted:#9fb0e0; --ok:#57e3a0; --warn:#ffd166; --danger:#ff6b6b; --primary:#6ee7ff; }
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui;background:radial-gradient(900px 500px at 0% 0%,#1d2e66,transparent),var(--bg);color:var(--text)}
-    .wrap{max-width:980px;margin:0 auto;padding:24px 16px 36px}
-    .panel{background:linear-gradient(180deg,#121a37,#1a2550);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:18px;box-shadow:0 20px 40px rgba(0,0,0,.35)}
-    .section{margin-top:14px;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.12);border-radius:12px;padding:12px}
-    h1{margin:0 0 6px}
-    .muted{color:var(--muted)}
-    .oknote{margin-top:10px;padding:10px 12px;border-radius:10px;background:rgba(87,227,160,.12);border:1px solid rgba(87,227,160,.4)}
-    .gauge{margin:14px 0 6px;height:20px;background:#0d1430;border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,.12)}
-    .fill{height:100%;width:0%;background:linear-gradient(90deg,var(--ok),#86efac);transition:width .35s ease, background .35s ease}
-    .stats{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
-    .chip{background:rgba(255,255,255,.08);padding:7px 10px;border-radius:10px;font-size:.92rem}
-    .btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-    button{border:none;border-radius:10px;padding:9px 12px;font-weight:700;cursor:pointer}
-    .primary{background:#6ee7ff;color:#05111d}
-    .ghost{background:#2a376a;color:#dce7ff}
-    .bar{height:10px;background:#0d1430;border-radius:999px;overflow:hidden;margin-top:8px}
-    .bar > span{display:block;height:100%;width:0%;background:linear-gradient(90deg,#57e3a0,#ffd166,#ff6b6b)}
-    canvas{width:100%;height:180px;background:#0d1430;border-radius:10px}
+    body{margin:0;font-family:Inter,system-ui;background:radial-gradient(900px 500px at 0% 0%,#1d2e66,transparent),var(--bg);color:var(--text);font-size:16px;}
+    .wrap{max-width:600px;margin:0 auto;padding:24px 16px 36px}
+    h1{margin:0 0 16px; font-size:1.5rem; text-align: center; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;}
+    
+    .card {
+        background: rgba(255,255,255,.03);
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 16px;
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .card-title {
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: var(--muted);
+        margin-bottom: 12px;
+        display: block;
+        font-weight: 600;
+    }
+
+    .big-stat {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 4px;
+        color: var(--text);
+    }
+    .sub-stat {
+        font-size: 0.9rem;
+        color: var(--muted);
+    }
+
+    .row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .col { display: flex; flex-direction: column; }
+    
+    .gauge-container {
+        height: 6px;
+        background: rgba(255,255,255,.1);
+        border-radius: 3px;
+        overflow: hidden;
+        margin-top: 8px;
+    }
+    .gauge-fill {
+        height: 100%;
+        background: var(--ok);
+        width: 0%;
+        transition: width 0.5s ease;
+    }
+
+    select {
+        width: 100%;
+        padding: 12px;
+        background: rgba(0,0,0,.2);
+        border: 1px solid rgba(255,255,255,.15);
+        color: var(--text);
+        border-radius: 8px;
+        font-size: 1rem;
+        margin-bottom: 12px;
+    }
+    
+    .cmd-box {
+        background: rgba(0,0,0,.3);
+        padding: 12px;
+        border-radius: 8px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border: 1px solid var(--primary);
+        display: none; /* Hidden by default */
+    }
+    
+    .cmd-code {
+        font-family: monospace;
+        color: var(--primary);
+        font-size: 0.9rem;
+        overflow-x: auto;
+        white-space: nowrap;
+        margin-right: 10px;
+    }
+
+    button.copy-btn {
+        background: rgba(110, 231, 255, 0.15);
+        color: var(--primary);
+        border: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        min-width: 60px;
+    }
+
+    .status-dot {
+        height: 8px; width: 8px; border-radius: 50%; display: inline-block; margin-right: 6px;
+        background: var(--ok);
+    }
+
+    .footer {
+        text-align: center;
+        font-size: 0.8rem;
+        color: rgba(255,255,255,.3);
+        margin-top: 32px;
+    }
+
   </style>
 </head>
 <body>
   <div class="wrap">
-    <div class="panel">
-      <h1>Mission Control</h1>
-      <p class="muted">Verified signals only: <strong>session context</strong> + <strong>system capacity</strong> + <strong>today deltas from real snapshots</strong>.</p>
-      <div class="oknote">
-        <strong>Working now:</strong> context used/max/percent, today's token increase, usage trend, Linux/Share disk capacity, hotspot folder sizes.
-      </div>
+    <h1>Mission Control</h1>
 
-      <div class="section">
-        <strong>Neural Identity (Live)</strong>
-        <div class="stats">
-          <div class="chip">Model: <strong id="modelName">-</strong></div>
-          <div class="chip">Provider: <strong id="providerName">-</strong></div>
-          <div class="chip">Auth: <strong id="authStatus" style="color:var(--ok)">-</strong></div>
+    <!-- Neural Identity -->
+    <div class="card">
+        <span class="card-title">Neural Identity</span>
+        <div class="row">
+            <div class="col">
+                <div class="big-stat" id="modelName">-</div>
+                <div class="sub-stat" id="providerName">-</div>
+            </div>
+            <div style="text-align: right;">
+                <div style="font-size: 0.9rem; color: var(--ok); font-weight: 600;"><span class="status-dot"></span>Active</div>
+            </div>
         </div>
-        <div style="margin-top:12px">
-          <label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px">Select Model to Generate Command:</label>
-          <select id="modelSelect" style="width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,.08);color:var(--text);border:1px solid rgba(255,255,255,.15);font-size:1rem;margin-bottom:8px">
-            <option value="" disabled selected>Select Target Model...</option>
-            <optgroup label="Google (Gemini)">
-              <option value="/model google/gemini-3.1-pro-preview">Gemini 3.1 Pro (Latest/Smartest)</option>
-              <option value="/model google/gemini-3-pro-preview">Gemini 3.0 Pro (Current Default)</option>
-              <option value="/model google/gemini-2.5-pro">Gemini 2.5 Pro (Previous Stable)</option>
-              <option value="/model google/gemini-2.5-flash">Gemini 2.5 Flash (Fast/Cheap)</option>
-            </optgroup>
-            <optgroup label="OpenAI">
-              <option value="/model openai/codex-5.3">Codex 5.3 (Standard Default)</option>
-              <option value="/model openai/gpt-4o">GPT-4o (Omni)</option>
-            </optgroup>
-            <optgroup label="Anthropic">
-              <option value="/model anthropic/claude-3-5-sonnet-20241022">Claude 3.5 Sonnet (Coding)</option>
-            </optgroup>
-          </select>
-          <div id="cmdBox" style="display:none;background:#0d1430;padding:10px;border-radius:8px;border:1px solid rgba(87,227,160,.4);margin-top:4px;align-items:center;justify-content:space-between">
-            <code id="cmdText" style="font-family:monospace;color:var(--ok);font-size:0.95rem"></code>
-            <button id="copyBtn" style="background:rgba(87,227,160,.15);color:var(--ok);padding:6px 10px;font-size:0.85rem;margin-left:8px">Copy</button>
-          </div>
+        
+        <div style="margin-top: 16px;">
+            <select id="modelSelect">
+                <option value="" disabled selected>Switch Model...</option>
+                <optgroup label="Google (Gemini)">
+                    <option value="/model google/gemini-3.1-pro-preview">Gemini 3.1 Pro (Latest)</option>
+                    <option value="/model google/gemini-3-pro-preview">Gemini 3.0 Pro (Standard)</option>
+                    <option value="/model google/gemini-2.5-pro">Gemini 2.5 Pro (Stable)</option>
+                    <option value="/model google/gemini-2.5-flash">Gemini 2.5 Flash (Fast)</option>
+                </optgroup>
+                <optgroup label="OpenAI">
+                    <option value="/model openai/codex-5.3">Codex 5.3 (Default)</option>
+                </optgroup>
+            </select>
+            
+            <div id="cmdBox" class="cmd-box">
+                <div class="cmd-code" id="cmdText"></div>
+                <button id="copyBtn" class="copy-btn">Copy</button>
+            </div>
         </div>
-      </div>
-
-      <div class="section">
-        <strong>Session Context (Live Snapshot)</strong>
-        <div class="gauge"><div id="fill" class="fill"></div></div>
-        <div class="stats">
-          <div class="chip"><strong id="pct">0%</strong> used</div>
-          <div class="chip"><strong id="usedOut">0</strong> / <span id="maxOut">0</span> tokens</div>
-          <div class="chip">Today token increase: <strong id="todayDelta">-</strong></div>
-          <div class="chip">Status: <strong id="status">Healthy</strong></div>
-        </div>
-        <p class="muted" id="meta" style="margin:8px 0 0">Ready.</p>
-      </div>
-
-      <div class="section">
-        <strong>System Capacity</strong>
-        <p class="muted" id="sysMeta" style="margin:6px 0 8px">Loading system telemetry…</p>
-        <div class="stats">
-          <div class="chip">Linux disk: <strong id="linuxDiskLabel">-</strong></div>
-          <div class="chip">Share disk: <strong id="shareDiskLabel">-</strong></div>
-        </div>
-        <div class="bar"><span id="linuxDiskBar"></span></div>
-        <div class="bar"><span id="shareDiskBar"></span></div>
-        <div class="stats" style="margin-top:10px">
-          <div class="chip">/tmp <strong id="tmpSize">-</strong></div>
-          <div class="chip">/var/log <strong id="varLogSize">-</strong></div>
-          <div class="chip">~/.config/nvm <strong id="nvmSize">-</strong></div>
-          <div class="chip">~/.npm <strong id="npmSize">-</strong></div>
-        </div>
-      </div>
-
-      <div class="section">
-        <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center">
-          <strong>Usage Trend (Context Used %)</strong>
-          <button class="ghost" id="toggleRange">Range: 8h</button>
-        </div>
-        <canvas id="historyChart" width="900" height="220"></canvas>
-        <div class="stats" style="margin-top:8px">
-          <div class="chip">Current: <strong id="histCurrent">-</strong></div>
-          <div class="chip">Min: <strong id="histMin">-</strong></div>
-          <div class="chip">Max: <strong id="histMax">-</strong></div>
-        </div>
-        <p class="muted" id="historyMeta" style="margin:8px 0 0">Collecting points…</p>
-      </div>
-
-      <div class="btns">
-        <button class="primary" id="refreshSession">Refresh Session Snapshot</button>
-        <button class="ghost" id="refreshSystem">Refresh System Snapshot</button>
-        <button class="ghost" id="refreshAll">Refresh All</button>
-      </div>
     </div>
+
+    <!-- Context & Session -->
+    <div class="card">
+        <span class="card-title">Session Context</span>
+        <div class="row">
+            <div class="col">
+                <div class="big-stat" id="pct">0%</div>
+                <div class="sub-stat">Context Used</div>
+            </div>
+            <div class="col" style="text-align: right;">
+                <div class="big-stat" id="todayDelta">-</div>
+                <div class="sub-stat">Today's Tokens</div>
+            </div>
+        </div>
+        <div class="gauge-container">
+            <div class="gauge-fill" id="fill"></div>
+        </div>
+        <div style="margin-top: 8px; font-size: 0.8rem; color: var(--muted); text-align: right;">
+            <span id="usedOut">0</span> / <span id="maxOut">0</span> tokens
+        </div>
+    </div>
+
+    <!-- System Health -->
+    <div class="card">
+        <span class="card-title">System Health</span>
+        <div class="row" style="margin-bottom: 12px;">
+            <span class="sub-stat">Linux Disk</span>
+            <span style="font-weight: 600; color: var(--text);" id="linuxDiskLabel">-</span>
+        </div>
+        <div class="row" style="margin-bottom: 12px;">
+            <span class="sub-stat">Share Disk</span>
+            <span style="font-weight: 600; color: var(--text);" id="shareDiskLabel">-</span>
+        </div>
+        <div class="row">
+            <span class="sub-stat">Last Update</span>
+            <span style="font-size: 0.8rem; color: var(--muted);" id="lastUpdate">-</span>
+        </div>
+    </div>
+    
+    <div class="footer">
+        SABER // MISSION CONTROL // V2
+    </div>
+
   </div>
 
   <script>
-    const fill = document.getElementById('fill');
-    const pct = document.getElementById('pct');
-    const usedOut = document.getElementById('usedOut');
-    const maxOut = document.getElementById('maxOut');
-    const status = document.getElementById('status');
-    const meta = document.getElementById('meta');
-    const todayDelta = document.getElementById('todayDelta');
+    // DOM Elements
+    const el = (id) => document.getElementById(id);
+    const elements = {
+        modelName: el('modelName'),
+        providerName: el('providerName'),
+        pct: el('pct'),
+        todayDelta: el('todayDelta'),
+        fill: el('fill'),
+        usedOut: el('usedOut'),
+        maxOut: el('maxOut'),
+        linuxDiskLabel: el('linuxDiskLabel'),
+        shareDiskLabel: el('shareDiskLabel'),
+        lastUpdate: el('lastUpdate'),
+        modelSelect: el('modelSelect'),
+        cmdBox: el('cmdBox'),
+        cmdText: el('cmdText'),
+        copyBtn: el('copyBtn')
+    };
 
-    const modelName = document.getElementById('modelName');
-    const providerName = document.getElementById('providerName');
-    const authStatus = document.getElementById('authStatus');
+    // Helper: Simplify provider names
+    const cleanProvider = (p) => {
+        if (!p) return '-';
+        if (p.toLowerCase().includes('google')) return 'Google';
+        if (p.toLowerCase().includes('openai')) return 'OpenAI';
+        return p;
+    };
 
-    const sysMeta = document.getElementById('sysMeta');
-    const linuxDiskLabel = document.getElementById('linuxDiskLabel');
-    const shareDiskLabel = document.getElementById('shareDiskLabel');
-    const linuxDiskBar = document.getElementById('linuxDiskBar');
-    const shareDiskBar = document.getElementById('shareDiskBar');
-    const tmpSize = document.getElementById('tmpSize');
-    const varLogSize = document.getElementById('varLogSize');
-    const nvmSize = document.getElementById('nvmSize');
-    const npmSize = document.getElementById('npmSize');
+    // Helper: Clean model names
+    const cleanModel = (m) => {
+        if (!m) return '-';
+        if (m.includes('gemini-3-pro')) return 'Gemini 3.0 Pro';
+        if (m.includes('gemini-3.1-pro')) return 'Gemini 3.1 Pro';
+        if (m.includes('gemini-2.5-pro')) return 'Gemini 2.5 Pro';
+        if (m.includes('gemini-2.5-flash')) return 'Gemini 2.5 Flash';
+        if (m.includes('codex')) return 'Codex 5.3';
+        return m.split('/').pop();
+    };
 
-    const historyCanvas = document.getElementById('historyChart');
-    const historyMeta = document.getElementById('historyMeta');
-    const histCurrent = document.getElementById('histCurrent');
-    const histMin = document.getElementById('histMin');
-    const histMax = document.getElementById('histMax');
-    const toggleRangeBtn = document.getElementById('toggleRange');
-    let historyRangeHours = 8;
-    
-    // Command Generator Logic
-    const modelSelect = document.getElementById('modelSelect');
-    const cmdBox = document.getElementById('cmdBox');
-    const cmdText = document.getElementById('cmdText');
-    const copyBtn = document.getElementById('copyBtn');
-    
-    modelSelect.addEventListener('change', (e) => {
+    async function update() {
+        try {
+            // Fetch Session Status
+            const res = await fetch('./status.json?ts=' + Date.now(), { cache: 'no-store' });
+            if (res.ok) {
+                const data = await res.json();
+                
+                // Neural Identity
+                elements.modelName.textContent = cleanModel(data.model);
+                elements.providerName.textContent = cleanProvider(data.provider);
+
+                // Context
+                const used = Number(data.used || 0);
+                const max = Number(data.max || 0);
+                const pctVal = max > 0 ? (used / max) * 100 : 0;
+                
+                elements.pct.textContent = pctVal.toFixed(1) + '%';
+                elements.fill.style.width = pctVal + '%';
+                elements.usedOut.textContent = (used / 1000).toFixed(1) + 'k';
+                elements.maxOut.textContent = (max / 1000).toFixed(0) + 'k';
+                
+                // Color logic for context
+                if (pctVal > 85) elements.fill.style.background = 'var(--danger)';
+                else if (pctVal > 70) elements.fill.style.background = 'var(--warn)';
+                else elements.fill.style.background = 'var(--ok)';
+
+                // Fetch History for Delta
+                try {
+                   const histRes = await fetch('./usage-history.jsonl?ts=' + Date.now());
+                   if (histRes.ok) {
+                       const txt = await histRes.text();
+                       const lines = txt.trim().split('\n').filter(Boolean);
+                       const rows = lines.map(l => JSON.parse(l));
+                       
+                       // Simple daily delta logic
+                       const now = Math.floor(Date.now()/1000);
+                       const dayStart = new Date(); dayStart.setHours(0,0,0,0);
+                       const dayStartTs = Math.floor(dayStart.getTime()/1000);
+                       
+                       const todayRows = rows.filter(r => r.ts >= dayStartTs);
+                       if (todayRows.length > 0) {
+                           const startUsed = todayRows[0].used || 0;
+                           const currentUsed = used;
+                           const delta = Math.max(0, currentUsed - startUsed);
+                           elements.todayDelta.textContent = '+' + (delta/1000).toFixed(1) + 'k';
+                       }
+                   }
+                } catch(e) { console.log('History fetch error', e); }
+                
+                // Timestamp
+                const date = new Date(data.updatedAt);
+                elements.lastUpdate.textContent = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            }
+
+            // Fetch System Status
+            const sysRes = await fetch('./system-status.json?ts=' + Date.now(), { cache: 'no-store' });
+            if (sysRes.ok) {
+                const sys = await sysRes.json();
+                const l = sys.linuxDisk || {};
+                const sh = sys.shareDisk || {};
+                elements.linuxDiskLabel.textContent = `${l.avail || '-'} Free`;
+                elements.shareDiskLabel.textContent = `${sh.avail || '-'} Free`;
+            }
+
+        } catch (e) {
+            console.error("Update failed", e);
+        }
+    }
+
+    // Command Logic
+    elements.modelSelect.addEventListener('change', (e) => {
         const cmd = e.target.value;
         if (cmd) {
-            cmdText.textContent = cmd;
-            cmdBox.style.display = 'flex';
-            copyBtn.textContent = 'Copy';
+            elements.cmdText.textContent = cmd;
+            elements.cmdBox.style.display = 'flex';
+            elements.copyBtn.textContent = 'Copy';
         }
     });
-    
-    copyBtn.addEventListener('click', () => {
-        navigator.clipboard.writeText(cmdText.textContent).then(() => {
-            copyBtn.textContent = 'Copied!';
-            setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+
+    elements.copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(elements.cmdText.textContent).then(() => {
+            elements.copyBtn.textContent = 'Copied!';
+            setTimeout(() => { elements.copyBtn.textContent = 'Copy'; }, 2000);
         });
     });
 
-    function startOfLocalDayTs(){ const d = new Date(); d.setHours(0,0,0,0); return Math.floor(d.getTime()/1000); }
-
-    function renderContext(used, max){
-      const p = max > 0 ? Math.max(0, Math.min(100, (used/max)*100)) : 0;
-      fill.style.width = p.toFixed(1) + '%';
-      pct.textContent = p.toFixed(1) + '%';
-      usedOut.textContent = Number(used||0).toLocaleString();
-      maxOut.textContent = Number(max||0).toLocaleString();
-      if (p < 70){ fill.style.background='linear-gradient(90deg,#57e3a0,#86efac)'; status.textContent='Healthy'; }
-      else if (p < 85){ fill.style.background='linear-gradient(90deg,#ffd166,#ffe29a)'; status.textContent='Watch'; }
-      else { fill.style.background='linear-gradient(90deg,#ff6b6b,#ff9a9a)'; status.textContent='High'; }
-    }
-
-    async function pullSession(){
-      meta.textContent = 'Loading session snapshot…';
-      try {
-        const res = await fetch('./status.json?ts=' + Date.now(), { cache:'no-store' });
-        if (!res.ok) throw new Error('status.json unavailable');
-        const data = await res.json();
-        if (!data.ok) throw new Error(data.error || 'status payload error');
-        renderContext(Number(data.used||0), Number(data.max||0));
-        meta.textContent = `Updated from ${data.source} at ${data.updatedAt}`;
-        
-        // Update Neural Identity
-        if (modelName) modelName.textContent = data.model || 'Unknown';
-        if (providerName) providerName.textContent = data.provider || 'Unknown';
-        if (authStatus) {
-            authStatus.textContent = data.auth || 'Verified';
-            authStatus.style.color = (data.auth === 'Verified' || data.auth === 'Authenticated') ? 'var(--ok)' : 'var(--danger)';
-        }
-
-        await loadHistory(Number(data.percent||0), Number(data.used||0), Number(data.max||0));
-      } catch (e){
-        meta.textContent = 'Could not load session snapshot.';
-      }
-    }
-
-    async function pullSystem(){
-      sysMeta.textContent = 'Loading system snapshot…';
-      try {
-        const res = await fetch('./system-status.json?ts=' + Date.now(), { cache:'no-store' });
-        if (!res.ok) throw new Error('system-status.json unavailable');
-        const s = await res.json();
-        if (!s.ok) throw new Error(s.error || 'system payload error');
-        const l = s.linuxDisk || {};
-        const sh = s.shareDisk || {};
-        linuxDiskLabel.textContent = `${l.usePercent ?? '-'}% (${l.avail ?? '-'} free)`;
-        shareDiskLabel.textContent = `${sh.usePercent ?? '-'}% (${sh.avail ?? '-'} free)`;
-        linuxDiskBar.style.width = `${Math.max(0, Math.min(100, Number(l.usePercent || 0)))}%`;
-        shareDiskBar.style.width = `${Math.max(0, Math.min(100, Number(sh.usePercent || 0)))}%`;
-
-        const h = s.hotspots || {};
-        tmpSize.textContent = h.tmp || '-';
-        varLogSize.textContent = h.varLog || '-';
-        nvmSize.textContent = h.nvm || '-';
-        npmSize.textContent = h.npm || '-';
-
-        sysMeta.textContent = `Updated at ${s.updatedAt}`;
-      } catch (e){
-        sysMeta.textContent = 'Could not load system snapshot.';
-      }
-    }
-
-    function drawHistory(points){
-      const c = historyCanvas;
-      const ctx = c.getContext('2d');
-      const w = c.width, h = c.height;
-      ctx.clearRect(0,0,w,h);
-      ctx.fillStyle = '#0d1430'; ctx.fillRect(0,0,w,h);
-      if (!points.length){ historyMeta.textContent = 'No history yet.'; return; }
-
-      const padL = 42, padR = 14, padT = 12, padB = 32;
-      const innerW = w - padL - padR, innerH = h - padT - padB;
-      ctx.strokeStyle = 'rgba(255,255,255,.08)';
-      ctx.fillStyle = 'rgba(220,230,255,.6)';
-      ctx.font = '11px Inter, system-ui';
-      for (let i=0;i<=4;i++){
-        const y=padT + (innerH*i/4);
-        const val = (100 - i*25);
-        ctx.beginPath(); ctx.moveTo(padL,y); ctx.lineTo(w-padR,y); ctx.stroke();
-        ctx.fillText(val + '%', 8, y+4);
-      }
-
-      const vals = points.map(p => (typeof p.percent === 'number' ? p.percent : null));
-      const valid = vals.filter(v => v !== null);
-      if (!valid.length){ historyMeta.textContent = 'No context points yet.'; return; }
-
-      ctx.strokeStyle = '#6ee7ff'; ctx.lineWidth = 2; ctx.beginPath();
-      let started = false;
-      points.forEach((p,i)=>{
-        const v = (typeof p.percent === 'number') ? p.percent : null;
-        if (v === null) return;
-        const x = padL + (i/(Math.max(1,points.length-1)))*innerW;
-        const y = padT + innerH - (Math.max(0,Math.min(100,v))/100)*innerH;
-        if(!started){ ctx.moveTo(x,y); started = true; } else { ctx.lineTo(x,y); }
-      });
-      ctx.stroke();
-
-      ctx.fillStyle = '#6ee7ff';
-      points.forEach((p,i)=>{
-        const v = (typeof p.percent === 'number') ? p.percent : null;
-        if (v === null) return;
-        const x = padL + (i/(Math.max(1,points.length-1)))*innerW;
-        const y = padT + innerH - (Math.max(0,Math.min(100,v))/100)*innerH;
-        ctx.beginPath(); ctx.arc(x,y,2.5,0,Math.PI*2); ctx.fill();
-      });
-
-      const start = new Date(points[0].ts*1000).toLocaleTimeString();
-      const end = new Date(points[points.length-1].ts*1000).toLocaleTimeString();
-      ctx.fillStyle = 'rgba(220,230,255,.7)'; ctx.font = '11px Inter, system-ui';
-      ctx.fillText(start, padL, h-10);
-      const endW = ctx.measureText(end).width;
-      ctx.fillText(end, w-padR-endW, h-10);
-
-      const cur = valid[valid.length-1], min = Math.min(...valid), max = Math.max(...valid);
-      histCurrent.textContent = `${cur.toFixed(1)}%`;
-      histMin.textContent = `${min.toFixed(1)}%`;
-      histMax.textContent = `${max.toFixed(1)}%`;
-      historyMeta.textContent = `Showing ${valid.length} context points across last ${historyRangeHours}h (${start} → ${end}).`;
-    }
-
-    async function loadHistory(currentPercent, currentUsed, currentMax){
-      try{
-        const res = await fetch('./usage-history.jsonl?ts=' + Date.now(), { cache: 'no-store' });
-        if(!res.ok) throw new Error('history not reachable');
-        const txt = await res.text();
-        const lines = txt.trim().split('\n').filter(Boolean);
-        const rows = lines.map(l=>{ try{return JSON.parse(l);}catch{return null;} }).filter(Boolean);
-
-        const now = Date.now()/1000;
-        const windowRows = rows.filter(r => r.ts && (now - r.ts) <= historyRangeHours*3600);
-        let recent = windowRows.filter(r => typeof r.percent === 'number');
-
-        if (!recent.length && Number.isFinite(currentPercent)) {
-          recent = [{ ts: Math.floor(now), percent: currentPercent, used: currentUsed, max: currentMax }];
-        }
-        drawHistory(recent);
-
-        const dayStart = startOfLocalDayTs();
-        const todayRows = rows.filter(r => r.ts >= dayStart && typeof r.used === 'number');
-        const baseline = todayRows.length ? todayRows[0].used : (Number.isFinite(currentUsed) ? currentUsed : null);
-        const latest = todayRows.length ? todayRows[todayRows.length-1].used : (Number.isFinite(currentUsed) ? currentUsed : null);
-        if (baseline !== null && latest !== null) {
-          const delta = Math.max(0, latest - baseline);
-          todayDelta.textContent = `+${delta.toLocaleString()} tokens`;
-        } else {
-          todayDelta.textContent = 'n/a';
-        }
-      }catch(e){
-        historyMeta.textContent = 'Could not load usage history yet.';
-      }
-    }
-
-    toggleRangeBtn.onclick = async () => {
-      historyRangeHours = historyRangeHours === 1 ? 8 : historyRangeHours === 8 ? 24 : historyRangeHours === 24 ? 72 : 1;
-      toggleRangeBtn.textContent = `Range: ${historyRangeHours}h`;
-      await pullSession();
-    };
-
-    document.getElementById('refreshSession').onclick = pullSession;
-    document.getElementById('refreshSystem').onclick = pullSystem;
-    document.getElementById('refreshAll').onclick = async () => { await pullSession(); await pullSystem(); };
-
-    pullSession();
-    pullSystem();
-    setInterval(pullSession, 60000);
-    setInterval(pullSystem, 120000);
+    // Init & Loop
+    update();
+    setInterval(update, 10000); // 10s polling (client side)
   </script>
 </body>
 </html>
