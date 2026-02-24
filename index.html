@@ -6,7 +6,7 @@
   <link rel="manifest" href="manifest.json">
   <link rel="icon" type="image/svg+xml" href="icon.svg">
   <style>
-    :root { --bg:#0a1022; --panel:#131c3b; --text:#eaf0ff; --muted:#9fb0e0; --ok:#57e3a0; --warn:#ffd166; --danger:#ff6b6b; --primary:#6ee7ff; }
+    :root { --bg:#5c1a1a; --panel:#131c3b; --text:#eaf0ff; --muted:#9fb0e0; --ok:#57e3a0; --warn:#ffd166; --danger:#ff6b6b; --primary:#6ee7ff; }
     *{box-sizing:border-box}
     body{margin:0;font-family:Inter,system-ui;background:radial-gradient(900px 500px at 0% 0%,#1d2e66,transparent),var(--bg);color:var(--text);font-size:16px;}
     .wrap{max-width:600px;margin:0 auto;padding:24px 16px 36px}
@@ -211,12 +211,26 @@
             </div>
         </div>
         <div class="row" style="margin-bottom: 8px;">
-            <span class="sub-stat">Linux Disk</span>
-            <span style="font-weight: 600; color: var(--text);" id="linuxDiskLabel">-</span>
+            <div class="col" style="flex:1">
+                <div style="display:flex;justify-content:space-between">
+                    <span class="sub-stat">Linux Disk</span>
+                    <span style="font-weight: 600; color: var(--text);" id="linuxDiskLabel">-</span>
+                </div>
+                <div class="gauge-container">
+                    <div id="linuxDiskBar" class="gauge-fill"></div>
+                </div>
+            </div>
         </div>
         <div class="row" style="margin-bottom: 8px;">
-            <span class="sub-stat">Share Disk</span>
-            <span style="font-weight: 600; color: var(--text);" id="shareDiskLabel">-</span>
+            <div class="col" style="flex:1">
+                <div style="display:flex;justify-content:space-between">
+                    <span class="sub-stat">Share Disk</span>
+                    <span style="font-weight: 600; color: var(--text);" id="shareDiskLabel">-</span>
+                </div>
+                <div class="gauge-container">
+                    <div id="shareDiskBar" class="gauge-fill"></div>
+                </div>
+            </div>
         </div>
         <div class="row" style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,.05); padding-top: 8px;">
             <span class="sub-stat">Last Pulse</span>
@@ -243,6 +257,8 @@
         maxOut: el('maxOut'),
         linuxDiskLabel: el('linuxDiskLabel'),
         shareDiskLabel: el('shareDiskLabel'),
+        linuxDiskBar: el('linuxDiskBar'),
+        shareDiskBar: el('shareDiskBar'),
         lastUpdate: el('lastUpdate'),
         pulse: el('pulse'),
         pulseText: el('pulseText'),
@@ -357,8 +373,17 @@
                 const sys = await sysRes.json();
                 const l = sys.linuxDisk || {};
                 const sh = sys.shareDisk || {};
-                elements.linuxDiskLabel.textContent = `${l.avail || '-'} Free`;
-                elements.shareDiskLabel.textContent = `${sh.avail || '-'} Free`;
+                elements.linuxDiskLabel.textContent = `${l.usePercent || '-'}% (${l.avail || '-'} Free)`;
+                elements.shareDiskLabel.textContent = `${sh.usePercent || '-'}% (${sh.avail || '-'} Free)`;
+                
+                if (l.usePercent) {
+                    elements.linuxDiskBar.style.width = l.usePercent + '%';
+                    elements.linuxDiskBar.className = 'gauge-fill ' + (l.usePercent > 90 ? 'danger' : l.usePercent > 75 ? 'warn' : '');
+                }
+                if (sh.usePercent) {
+                    elements.shareDiskBar.style.width = sh.usePercent + '%';
+                    elements.shareDiskBar.className = 'gauge-fill ' + (sh.usePercent > 90 ? 'danger' : sh.usePercent > 75 ? 'warn' : '');
+                }
                 
                 if (sys.cpu !== undefined) {
                     elements.cpuLoad.textContent = sys.cpu + '%';
