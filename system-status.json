@@ -1,11 +1,11 @@
 {
   "ok": true,
-  "cpu": 9,
+  "cpu": 44,
   "linuxDisk": {
     "size": "11G",
-    "used": "7.4G",
-    "avail": "1.9G",
-    "usePercent": "81"
+    "used": "6.9G",
+    "avail": "2.4G",
+    "usePercent": "75"
   },
   "shareDisk": {
     "size": "21G",
@@ -16,8 +16,8 @@
   "hotspots": {
     "tmp": "0B",
     "varLog": "0B",
-    "nvm": "2.2G",
-    "npm": "8.6M"
+    "nvm": "0B",
+    "npm": "5.3M"
   },
-  "updatedAt": "2026-02-24T12:04:45-0500"
+  "updatedAt": "2026-02-24T12:06:25-0500"
 }
