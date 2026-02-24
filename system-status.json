@@ -1,0 +1,28 @@
+{
+  "ok": true,
+  "updatedAt": "2026-02-22T15:04:26-0500",
+  "linuxDisk": {
+    "filesystem": "/dev/vdc",
+    "size": "11G",
+    "used": "6.4G",
+    "avail": "2.8G",
+    "usePercent": 70,
+    "mount": "/"
+  },
+  "shareDisk": {
+    "filesystem": "9p",
+    "size": "21G",
+    "used": "17G",
+    "avail": "3.0G",
+    "usePercent": 86,
+    "mount": "/mnt/chromeos"
+  },
+  "hotspots": {
+    "tmp": "37M",
+    "varLog": "623M",
+    "nvm": "1.6G",
+    "npm": "521M",
+    "cache": "64M",
+    "tmpGhAudit": ""
+  }
+}
