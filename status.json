@@ -1,14 +1,13 @@
 {
   "ok": true,
-  "used": 122000,
+  "used": 243000,
   "max": 1049000,
-  "percent": 12,
+  "percent": 23,
   "sessionLeftPercent": null,
   "dayLeftPercent": null,
   "model": "google/gemini-3-pro-preview",
   "provider": "Google",
-  "auth": "Unknown",
-  "source": "openclaw status (stale fallback)",
-  "error": "[Errno 2] No such file or directory: 'openclaw'",
-  "updatedAt": "2026-02-24T11:39:46-0500"
+  "auth": "Verified",
+  "source": "openclaw status",
+  "updatedAt": "2026-02-24T11:40:10-0500"
 }
