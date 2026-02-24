@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Mission Control</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
   <style>
     :root { --bg:#0a1022; --panel:#131c3b; --text:#eaf0ff; --muted:#9fb0e0; --ok:#57e3a0; --warn:#ffd166; --danger:#ff6b6b; --primary:#6ee7ff; }
     *{box-sizing:border-box}
@@ -44,17 +45,24 @@
     .col { display: flex; flex-direction: column; }
     
     .gauge-container {
-        height: 6px;
-        background: rgba(255,255,255,.1);
-        border-radius: 3px;
+        height: 12px;
+        background: #0d1430;
+        border-radius: 6px;
         overflow: hidden;
         margin-top: 8px;
+        border: 1px solid rgba(255,255,255,.1);
     }
     .gauge-fill {
         height: 100%;
-        background: var(--ok);
         width: 0%;
-        transition: width 0.5s ease;
+        transition: width 0.5s ease, background 0.5s ease;
+        background: linear-gradient(90deg, var(--ok), #86efac);
+    }
+    .gauge-fill.warn {
+        background: linear-gradient(90deg, var(--warn), #ffe29a);
+    }
+    .gauge-fill.danger {
+        background: linear-gradient(90deg, var(--danger), #ff9a9a);
     }
 
     select {
@@ -256,9 +264,14 @@
                 elements.maxOut.textContent = (max / 1000).toFixed(0) + 'k';
                 
                 // Color logic for context
-                if (pctVal > 85) elements.fill.style.background = 'var(--danger)';
-                else if (pctVal > 70) elements.fill.style.background = 'var(--warn)';
-                else elements.fill.style.background = 'var(--ok)';
+                elements.fill.className = 'gauge-fill';
+                if (pctVal > 85) {
+                    elements.fill.classList.add('danger');
+                } else if (pctVal > 70) {
+                    elements.fill.classList.add('warn');
+                } else {
+                    // default green
+                }
 
                 // Fetch History for Delta
                 try {

@@ -1,0 +1,15 @@
+{
+  "name": "Mission Control",
+  "short_name": "Mission Control",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0a1022",
+  "theme_color": "#0a1022",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}
