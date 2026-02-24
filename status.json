@@ -10,5 +10,5 @@
   "auth": "Unknown",
   "source": "openclaw status (stale fallback)",
   "error": "[Errno 2] No such file or directory: 'openclaw'",
-  "updatedAt": "2026-02-24T12:46:18-0500"
+  "updatedAt": "2026-02-24T12:47:22-0500"
 }
