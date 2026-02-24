@@ -7,8 +7,7 @@
   "dayLeftPercent": null,
   "model": "google/gemini-3-pro-preview",
   "provider": "Google",
-  "auth": "Unknown",
-  "source": "openclaw status (stale fallback)",
-  "error": "[Errno 2] No such file or directory: 'openclaw'",
-  "updatedAt": "2026-02-24T11:46:16-0500"
+  "auth": "Verified",
+  "source": "openclaw status",
+  "updatedAt": "2026-02-24T11:47:15-0500"
 }
