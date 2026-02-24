@@ -1,10 +1,13 @@
 {
   "ok": true,
-  "used": 17000,
-  "max": 272000,
-  "percent": 6,
+  "used": 86000,
+  "max": 1000000,
+  "percent": 9,
   "sessionLeftPercent": null,
   "dayLeftPercent": null,
+  "model": null,
+  "provider": null,
+  "auth": "Verified",
   "source": "openclaw status",
-  "updatedAt": "2026-02-22T15:03:41-0500"
+  "updatedAt": "2026-02-24T08:25:13-0500"
 }
