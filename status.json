@@ -1,6 +1,6 @@
 {
   "ok": true,
-  "used": 116000,
+  "used": 121000,
   "max": 1000000,
   "percent": 12,
   "sessionLeftPercent": null,
@@ -9,5 +9,5 @@
   "provider": "Google",
   "auth": "Verified",
   "source": "openclaw status",
-  "updatedAt": "2026-02-24T09:28:01-0500"
+  "updatedAt": "2026-02-24T09:29:49-0500"
 }
