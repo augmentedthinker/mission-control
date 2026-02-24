@@ -12,6 +12,20 @@
     .wrap{max-width:600px;margin:0 auto;padding:24px 16px 36px}
     h1{margin:0 0 16px; font-size:1.5rem; text-align: center; color: var(--primary); text-transform: uppercase; letter-spacing: 1px;}
     
+    .pulse-indicator {
+        display: inline-block;
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        background: var(--ok);
+        margin-right: 6px;
+        box-shadow: 0 0 8px var(--ok);
+    }
+    .pulse-indicator.dead {
+        background: var(--danger);
+        box-shadow: none;
+        opacity: 0.5;
+    }
+    
     .card {
         background: rgba(255,255,255,.03);
         border: 1px solid rgba(255,255,255,.08);
@@ -182,17 +196,30 @@
 
     <!-- System Health -->
     <div class="card">
-        <span class="card-title">System Health</span>
-        <div class="row" style="margin-bottom: 12px;">
+        <span class="card-title">System Heartbeat</span>
+        <div class="row" style="margin-bottom: 12px; align-items: center;">
+            <div class="col">
+                <span class="sub-stat">Status</span>
+                <div style="font-weight: 600; font-size: 1.1rem; display: flex; align-items: center;">
+                    <div id="pulse" class="pulse-indicator"></div>
+                    <span id="pulseText">Online</span>
+                </div>
+            </div>
+            <div class="col" style="text-align: right;">
+                <span class="sub-stat">CPU Load</span>
+                <span id="cpuLoad" style="font-weight: 700; font-size: 1.1rem; color: var(--text)">-</span>
+            </div>
+        </div>
+        <div class="row" style="margin-bottom: 8px;">
             <span class="sub-stat">Linux Disk</span>
             <span style="font-weight: 600; color: var(--text);" id="linuxDiskLabel">-</span>
         </div>
-        <div class="row" style="margin-bottom: 12px;">
+        <div class="row" style="margin-bottom: 8px;">
             <span class="sub-stat">Share Disk</span>
             <span style="font-weight: 600; color: var(--text);" id="shareDiskLabel">-</span>
         </div>
-        <div class="row">
-            <span class="sub-stat">Last Update</span>
+        <div class="row" style="margin-top: 12px; border-top: 1px solid rgba(255,255,255,.05); padding-top: 8px;">
+            <span class="sub-stat">Last Pulse</span>
             <span style="font-size: 0.8rem; color: var(--muted);" id="lastUpdate">-</span>
         </div>
     </div>
@@ -217,6 +244,9 @@
         linuxDiskLabel: el('linuxDiskLabel'),
         shareDiskLabel: el('shareDiskLabel'),
         lastUpdate: el('lastUpdate'),
+        pulse: el('pulse'),
+        pulseText: el('pulseText'),
+        cpuLoad: el('cpuLoad'),
         modelSelect: el('modelSelect'),
         cmdBox: el('cmdBox'),
         cmdText: el('cmdText'),
@@ -298,7 +328,27 @@
                 
                 // Timestamp
                 const date = new Date(data.updatedAt);
+                const now = new Date();
+                const diffSec = (now - date) / 1000;
+                
                 elements.lastUpdate.textContent = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                
+                // Pulse Logic
+                if (diffSec < 120) {
+                    elements.pulse.className = 'pulse-indicator';
+                    elements.pulseText.textContent = 'Active';
+                    elements.pulseText.style.color = 'var(--ok)';
+                } else if (diffSec < 300) {
+                    elements.pulse.className = 'pulse-indicator dead';
+                    elements.pulse.style.background = 'var(--warn)';
+                    elements.pulseText.textContent = 'Slow';
+                    elements.pulseText.style.color = 'var(--warn)';
+                } else {
+                    elements.pulse.className = 'pulse-indicator dead';
+                    elements.pulse.style.background = 'var(--danger)';
+                    elements.pulseText.textContent = 'Offline';
+                    elements.pulseText.style.color = 'var(--danger)';
+                }
             }
 
             // Fetch System Status
@@ -309,6 +359,13 @@
                 const sh = sys.shareDisk || {};
                 elements.linuxDiskLabel.textContent = `${l.avail || '-'} Free`;
                 elements.shareDiskLabel.textContent = `${sh.avail || '-'} Free`;
+                
+                if (sys.cpu !== undefined) {
+                    elements.cpuLoad.textContent = sys.cpu + '%';
+                    if (sys.cpu > 80) elements.cpuLoad.style.color = 'var(--danger)';
+                    else if (sys.cpu > 50) elements.cpuLoad.style.color = 'var(--warn)';
+                    else elements.cpuLoad.style.color = 'var(--ok)';
+                }
             }
 
         } catch (e) {
