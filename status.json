@@ -5,9 +5,9 @@
   "percent": 9,
   "sessionLeftPercent": null,
   "dayLeftPercent": null,
-  "model": null,
-  "provider": null,
+  "model": "google/gemini-3-pro-preview",
+  "provider": "Google",
   "auth": "Verified",
   "source": "openclaw status",
-  "updatedAt": "2026-02-24T08:25:13-0500"
+  "updatedAt": "2026-02-24T08:26:43-0500"
 }
