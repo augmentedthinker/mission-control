@@ -43,6 +43,29 @@
           <div class="chip">Provider: <strong id="providerName">-</strong></div>
           <div class="chip">Auth: <strong id="authStatus" style="color:var(--ok)">-</strong></div>
         </div>
+        <div style="margin-top:12px">
+          <label style="font-size:0.85rem;color:var(--muted);display:block;margin-bottom:4px">Select Model to Generate Command:</label>
+          <select id="modelSelect" style="width:100%;padding:10px;border-radius:8px;background:rgba(255,255,255,.08);color:var(--text);border:1px solid rgba(255,255,255,.15);font-size:1rem;margin-bottom:8px">
+            <option value="" disabled selected>Select Target Model...</option>
+            <optgroup label="Google (Gemini)">
+              <option value="/model google/gemini-3.1-pro-preview">Gemini 3.1 Pro (Latest/Smartest)</option>
+              <option value="/model google/gemini-3-pro-preview">Gemini 3.0 Pro (Current Default)</option>
+              <option value="/model google/gemini-2.5-pro">Gemini 2.5 Pro (Previous Stable)</option>
+              <option value="/model google/gemini-2.5-flash">Gemini 2.5 Flash (Fast/Cheap)</option>
+            </optgroup>
+            <optgroup label="OpenAI">
+              <option value="/model openai/codex-5.3">Codex 5.3 (Standard Default)</option>
+              <option value="/model openai/gpt-4o">GPT-4o (Omni)</option>
+            </optgroup>
+            <optgroup label="Anthropic">
+              <option value="/model anthropic/claude-3-5-sonnet-20241022">Claude 3.5 Sonnet (Coding)</option>
+            </optgroup>
+          </select>
+          <div id="cmdBox" style="display:none;background:#0d1430;padding:10px;border-radius:8px;border:1px solid rgba(87,227,160,.4);margin-top:4px;align-items:center;justify-content:space-between">
+            <code id="cmdText" style="font-family:monospace;color:var(--ok);font-size:0.95rem"></code>
+            <button id="copyBtn" style="background:rgba(87,227,160,.15);color:var(--ok);padding:6px 10px;font-size:0.85rem;margin-left:8px">Copy</button>
+          </div>
+        </div>
       </div>
 
       <div class="section">
@@ -126,6 +149,28 @@
     const histMax = document.getElementById('histMax');
     const toggleRangeBtn = document.getElementById('toggleRange');
     let historyRangeHours = 8;
+    
+    // Command Generator Logic
+    const modelSelect = document.getElementById('modelSelect');
+    const cmdBox = document.getElementById('cmdBox');
+    const cmdText = document.getElementById('cmdText');
+    const copyBtn = document.getElementById('copyBtn');
+    
+    modelSelect.addEventListener('change', (e) => {
+        const cmd = e.target.value;
+        if (cmd) {
+            cmdText.textContent = cmd;
+            cmdBox.style.display = 'flex';
+            copyBtn.textContent = 'Copy';
+        }
+    });
+    
+    copyBtn.addEventListener('click', () => {
+        navigator.clipboard.writeText(cmdText.textContent).then(() => {
+            copyBtn.textContent = 'Copied!';
+            setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+        });
+    });
 
     function startOfLocalDayTs(){ const d = new Date(); d.setHours(0,0,0,0); return Math.floor(d.getTime()/1000); }
 

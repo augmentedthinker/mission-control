@@ -21,7 +21,7 @@ while true; do
     echo "Changes detected. Committing and pushing..."
     git add status.json system-status.json usage-history.jsonl
     git commit -m "Update status: $(date)"
-    git push origin gh-pages
+    git push origin main
   else
     echo "No changes."
   fi
