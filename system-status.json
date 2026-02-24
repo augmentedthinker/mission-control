@@ -1,28 +1,23 @@
 {
   "ok": true,
-  "updatedAt": "2026-02-22T15:04:26-0500",
+  "cpu": 3,
   "linuxDisk": {
-    "filesystem": "/dev/vdc",
     "size": "11G",
-    "used": "6.4G",
-    "avail": "2.8G",
-    "usePercent": 70,
-    "mount": "/"
+    "used": "6.9G",
+    "avail": "2.3G",
+    "usePercent": "76"
   },
   "shareDisk": {
-    "filesystem": "9p",
     "size": "21G",
-    "used": "17G",
-    "avail": "3.0G",
-    "usePercent": 86,
-    "mount": "/mnt/chromeos"
+    "used": "18G",
+    "avail": "2.5G",
+    "usePercent": "88"
   },
   "hotspots": {
-    "tmp": "37M",
-    "varLog": "623M",
+    "tmp": "0B",
+    "varLog": "0B",
     "nvm": "1.6G",
-    "npm": "521M",
-    "cache": "64M",
-    "tmpGhAudit": ""
-  }
+    "npm": "521M"
+  },
+  "updatedAt": "2026-02-24T10:50:17-0500"
 }
